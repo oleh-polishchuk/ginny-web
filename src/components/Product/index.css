@@ -1,9 +1,21 @@
 .product {
     display: flex;
+    flex-direction: column;
+    height: 170px;
+    width: 100%;
+    border: 1px solid #000;
+}
+
+.product_content {
+    display: flex;
     align-items: center;
     justify-content: center;
-    height: 100px;
     width: 100%;
+    height: 100%;
+}
+
+.product_status {
+    border-bottom: 1px solid #000;
 }
 
 .product_preview {
@@ -18,6 +30,6 @@
 .product_image {
     width: 100%;
     max-width: 100%;
-    max-height: 100%;
+    max-height: 115px;
     object-fit: contain;
 }

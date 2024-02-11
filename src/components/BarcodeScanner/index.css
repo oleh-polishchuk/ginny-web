@@ -6,7 +6,8 @@
 
     width: 100%;
     border: 1px solid;
-    min-height: calc((100vw - 50px) / 1.3);
+    max-height: calc((100vw - 50px) / 1.3);
+    overflow: hidden;
 }
 
 .barcode-scanner_video {

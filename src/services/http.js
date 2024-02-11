@@ -4,9 +4,14 @@ const http = axios.create({
     baseURL: 'https://world.openfoodfacts.org/api/'
 });
 
-export const getProducts = async (barcode) => {
-    // https://world.openfoodfacts.org/api/v0/product/${barcode}.json
+const cache = {};
 
-    const response = await http.get(`v0/product/${barcode}.json`);
-    return response.data;
+export const getProducts = async (barcode) => {
+    if (cache[barcode]) {
+        return cache[barcode];
+    } else {
+        const response = await http.get(`v0/product/${barcode}.json`);
+        cache[barcode] = response.data;
+        return response.data;
+    }
 }

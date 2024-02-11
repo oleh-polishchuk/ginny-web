@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import './App.css';
 import { BarcodeScanner } from "./components/BarcodeScanner";
@@ -8,48 +8,51 @@ import Product from "./components/Product";
 let interval = null;
 
 function App() {
-    const [result, setResult] = useState(null);
+    const [code, setCode] = useState('');
     const [product, setProduct] = useState(null);
-    const cleanResult = () => {
+
+    const handleOnResult = (scanner) => {
+        console.log(`1. Barcode detected: ${scanner.getText()}`);
         if (interval) {
+            console.log(`2. Clear interval`);
             clearInterval(interval);
         }
+        console.log(`3. Set code`);
+        setCode(scanner.getText());
+        console.log(`4. Set interval`);
         interval = setTimeout(() => {
-            setResult(null);
-            setProduct(null);
+            console.log(`5. Clear code`);
+            // setCode(null);
         }, 5000);
     };
 
-    const handleOnResult = (scanner) => {
-        console.log(`1. Scan result: ${scanner.getText()}`);
-        setResult(scanner.getText());
-
-        console.log(`2. Get product: ${scanner.getText()}`);
-        getProducts(scanner.getText())
-            .then((data) => {
-
-                console.log(`3. Product found: ${data.status_verbose}`);
-                if (data && data.status_verbose === 'product found') {
+    useEffect(() => {
+        if (code) {
+            getProducts(code)
+                .then((data) => {
+                    console.log(`6. Product found: ${data.status_verbose}`);
                     setProduct({
-                        name: data.product.product_name,
-                        image: data.product.image_url,
-                        code: data.product.code
+                        status: data.status_verbose,
+                        name: data?.product?.product_name,
+                        image: data?.product?.image_url,
+                        code: data?.product?.code
                     });
-
-                    console.log(`4. Clean result`);
-                    cleanResult();
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    };
+                })
+                .catch((error) => {
+                    alert('Error: ' + error);
+                });
+        } else {
+            console.log(`7. Clean product`);
+            setProduct(null);
+        }
+    }, [code]);
 
     return (
         <div className="app">
             <BarcodeScanner className="app_barcode-scanner" onResult={handleOnResult}/>
 
             <Product
+                status={product && product.status}
                 name={product && product.name}
                 image={product && product.image}
                 code={product && product.code}
